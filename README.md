@@ -55,14 +55,6 @@ pip install --upgrade pip
 pip install fire tensorboardX
 ```
 
-Finally, install SparseConvNet. This is not required for PointPillars, but the general SECOND code base expects this
-to be correctly configured. 
-```bash
-git clone git@github.com:facebookresearch/SparseConvNet.git
-cd SparseConvNet/
-bash build.sh
-# NOTE: if bash build.sh fails, try bash develop.sh instead
-```
 
 Additionally, you may need to install Boost geometry:
 
@@ -173,3 +165,13 @@ python pytorch/train.py evaluate --config_path= configs/pointpillars/car/xyres_1
 
 * Detection result will saved in model_dir/eval_results/step_xxx.
 * By default, results are stored as a result.pkl file. To save as official KITTI label format use --pickle_result=False.
+
+
+### Onnx
+
+
+```bash
+cd ~/second.pytorch/second/
+python pytorch/train.py inference --config_path= configs/pointpillars/car/xyres_16.proto --model_dir=/path/to/model_dir
+```
+
