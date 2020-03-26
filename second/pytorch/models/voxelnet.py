@@ -3,7 +3,7 @@ from enum import Enum
 from functools import reduce
 
 import numpy as np
-import sparseconvnet as scn
+#import sparseconvnet as scn
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -198,6 +198,7 @@ class SparseMiddleExtractor(nn.Module):
                  num_filters_down2=[64, 64],
                  name='SparseMiddleExtractor'):
         super(SparseMiddleExtractor, self).__init__()
+        '''
         self.name = name
         if use_norm:
             BatchNorm1d = change_default_args(
@@ -249,15 +250,17 @@ class SparseMiddleExtractor(nn.Module):
             scn.BatchNormReLU(num_filters[-1], eps=1e-3, momentum=0.99))
         middle_layers.append(scn.SparseToDense(3, num_filters[-1]))
         self.middle_conv = Sequential(*middle_layers)
-
+        '''
     def forward(self, voxel_features, coors, batch_size):
         # coors[:, 1] += 1
+        '''
         coors = coors.int()[:, [1, 2, 3, 0]]
         ret = self.scn_input((coors.cpu(), voxel_features, batch_size))
         ret = self.middle_conv(ret)
         N, C, D, H, W = ret.shape
         ret = ret.view(N, C * D, H, W)
         return ret
+        '''
 
 
 class ZeroPad3d(nn.ConstantPad3d):
@@ -667,7 +670,7 @@ class VoxelNet(nn.Module):
         y_sub_shaped = example[6]
         mask = example[7]
         voxel_features = self.voxel_feature_extractor(pillar_x, pillar_y, pillar_z, pillar_i, num_points, x_sub_shaped, y_sub_shaped, mask)
-        return voxel_features
+        #return voxel_features
         # trim shape for middle_feature_extractor
         voxel_features = voxel_features.squeeze()
         voxel_features = voxel_features.permute(1, 0)

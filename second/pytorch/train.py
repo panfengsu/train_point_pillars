@@ -297,6 +297,8 @@ def train(config_path,
                          anchors, labels, reg_targets]
 
                 ret_dict = net(input)
+                #print(ret_dict)
+                #print(len(ret_dict))
                 assert 10==len(ret_dict), "something wring with training output size!"
                 # return 0
                 # ret_dict {
@@ -890,10 +892,10 @@ def prediction_once(net,
     # y_sub_shaped = torch.ones([1, 100,8599, 1],dtype=torch.float32, device=pillar_x.device )
     # mask = torch.ones([1, 100, 8599, 1],dtype=torch.float32, device=pillar_x.device )
 
-    example1 = [pillar_x, pillar_y, pillar_z, pillar_i, num_points_per_pillar, x_sub_shaped, y_sub_shaped, mask]
+    example1 = (pillar_x, pillar_y, pillar_z, pillar_i, num_points_per_pillar, x_sub_shaped, y_sub_shaped, mask)
     # example1 = [pillar_x, pillar_y, pillar_z]
     # example1 = [pillar_x, pillar_y, pillar_z, pillar_i, num_points, mask]
-    torch.onnx.export(net, example1, "pp.onnx", verbose=False, input_names = input_names)
+    torch.onnx.export(net.voxel_feature_extractor, example1, "pp.onnx", verbose=False, input_names = input_names)
 
     sp_f = torch.ones([1, 64, 496, 432],dtype=torch.float32, device=pillar_x.device )
     torch.onnx.export(net.rpn, sp_f, "rpn.onnx", verbose=False)
@@ -979,7 +981,12 @@ def inference(config_path,
     bar.start(len(eval_dataset) // input_cfg.batch_size + 1)
 
     for example in iter(eval_dataloader):
+        
         example = example_convert_to_torch(example, float_dtype)
+        #torch.onnx.export(net, example, "pp.onnx", verbose=False)
+        #return 0
+        # predictions_dicts = net(example)
+        
         example_tuple = list(example.values())
         batch_image_shape = example_tuple[8]
         example_tuple[8] = torch.from_numpy(example_tuple[8])
@@ -991,6 +998,7 @@ def inference(config_path,
             model_cfg.lidar_input, global_set)
         return 0
         bar.print_bar()
+        
 
 if __name__ == '__main__':
     fire.Fire()

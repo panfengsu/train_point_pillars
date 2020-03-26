@@ -6,18 +6,18 @@ from second.utils.find import find_cuda_device_arch
 import numba
 import numpy as np
 
-try:
-    from second.core.non_max_suppression.nms import (
-        non_max_suppression_cpu, rotate_non_max_suppression_cpu)
-except:
-    current_dir = Path(__file__).resolve().parents[0]
-    load_pb11(
-        ["../cc/nms/nms_kernel.cu.cc", "../cc/nms/nms.cc"],
-        current_dir / "nms.so",
-        current_dir,
-        cuda=True)
-    from second.core.non_max_suppression.nms import (
-        non_max_suppression_cpu, rotate_non_max_suppression_cpu)
+#try:
+#    from second.core.non_max_suppression.nms import (
+#        non_max_suppression_cpu, rotate_non_max_suppression_cpu)
+#except:
+current_dir = Path(__file__).resolve().parents[0]
+load_pb11(
+    ["../cc/nms/nms_kernel.cu.cc", "../cc/nms/nms.cc"],
+    current_dir / "nms.so",
+    current_dir,
+    cuda=True)
+from second.core.non_max_suppression.nms import (
+    non_max_suppression_cpu, rotate_non_max_suppression_cpu)
 
 from second.core import box_np_ops
 
